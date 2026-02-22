@@ -665,10 +665,26 @@ export default function App() {
 
     const executeSearch = async (): Promise<void> => {
       try {
-        const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+        let apiKey = process.env.GEMINI_API_KEY;
+        
+        // Fallback for environments where the key might be in import.meta.env
         if (!apiKey) {
-          throw new Error(lang === 'fr' ? "Clé API Gemini manquante." : "Gemini API Key is missing.");
+          apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY;
         }
+
+        if (!apiKey) {
+          // If still no key, check if we should prompt for one (for paid/restricted models)
+          if (typeof window !== 'undefined' && (window as any).aistudio) {
+            const hasKey = await (window as any).aistudio.hasSelectedApiKey();
+            if (!hasKey) {
+              await (window as any).aistudio.openSelectKey();
+              // After opening, we can't easily wait for it, but the next attempt might work
+              throw new Error(lang === 'fr' ? "Veuillez sélectionner une clé API dans le dialogue qui vient de s'ouvrir." : "Please select an API key in the dialog that just opened.");
+            }
+          }
+          throw new Error(lang === 'fr' ? "Clé API Gemini manquante. Veuillez la configurer dans les paramètres." : "Gemini API Key is missing. Please configure it in the settings.");
+        }
+
         const ai = new GoogleGenAI({ apiKey });
         const model = "gemini-3-flash-preview";
         
