@@ -665,7 +665,11 @@ export default function App() {
 
     const executeSearch = async (): Promise<void> => {
       try {
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const apiKey = process.env.GEMINI_API_KEY || (import.meta as any).env?.VITE_GEMINI_API_KEY;
+        if (!apiKey) {
+          throw new Error(lang === 'fr' ? "Clé API Gemini manquante." : "Gemini API Key is missing.");
+        }
+        const ai = new GoogleGenAI({ apiKey });
         const model = "gemini-3-flash-preview";
         
         let prompt = "";
