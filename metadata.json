@@ -1,0 +1,5 @@
+{
+  "name": "Garonne Flood Watch",
+  "description": "Real-time flood monitoring and property risk assessment for the Garonne River region.",
+  "requestFramePermissions": ["geolocation"]
+}

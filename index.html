@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Garonne Flood Watch</title>
+    <script>
+      // Suppress MetaMask/Web3 errors that can appear in the preview environment
+      (function() {
+        const isMetaMaskError = (msg) => {
+          const lowerMsg = String(msg || '').toLowerCase();
+          return lowerMsg.includes('metamask') || lowerMsg.includes('ethereum') || lowerMsg.includes('web3');
+        };
+        window.addEventListener('error', (e) => {
+          if (isMetaMaskError(e.message)) { e.stopImmediatePropagation(); e.preventDefault(); }
+        }, true);
+        window.addEventListener('unhandledrejection', (e) => {
+          if (isMetaMaskError(e.reason?.message || e.reason)) { e.stopImmediatePropagation(); e.preventDefault(); }
+        }, true);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
